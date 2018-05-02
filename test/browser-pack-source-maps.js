@@ -1,7 +1,6 @@
 var browserify = require('browserify');
 var convert = require('convert-source-map');
 var path = require('path');
-var pathIsAbsolute = require('path-is-absolute');
 var zipObject = require('lodash.zipobject');
 var test = require('tap').test;
 var babelify = require('../');
@@ -22,13 +21,13 @@ test('browserify source maps (no basedir)', function(t) {
   });
 
   b.transform(babelify, {
-    presets: ['es2015'],
+    presets: ['@babel/preset-env'],
     sourceMaps: false   // no intermediate source maps
   });
 
   var deps = {};
   b.on('dep', function(dep) {
-    t.ok(pathIsAbsolute(dep.file));
+    t.ok(path.isAbsolute(dep.file));
     deps[dep.file] = dep.source;
   });
 
@@ -45,7 +44,7 @@ test('browserify source maps (no basedir)', function(t) {
 
     // source paths are relative to the basedir (cwd if not set)
     sm.sources.forEach(function(source) {
-      t.ok(!pathIsAbsolute(source));
+      t.ok(!path.isAbsolute(source));
       var aSource = path.join(__dirname, '..', source);
       t.ok(deps.hasOwnProperty(aSource));
     });
@@ -72,13 +71,13 @@ test('browserify source maps (with basedir)', function(t) {
   });
 
   b.transform(babelify, {
-    presets: ['es2015'],
+    presets: ['@babel/preset-env'],
     sourceMaps: false   // no intermediate source maps
   });
 
   var deps = {};
   b.on('dep', function(dep) {
-    t.ok(pathIsAbsolute(dep.file));
+    t.ok(path.isAbsolute(dep.file));
     deps[dep.file] = dep.source;
   });
 
@@ -95,7 +94,7 @@ test('browserify source maps (with basedir)', function(t) {
 
     // source paths are relative to the basedir (cwd if not set)
     sm.sources.forEach(function(source) {
-      t.ok(!pathIsAbsolute(source));
+      t.ok(!path.isAbsolute(source));
       var aSource = path.join(__dirname, source);
       t.ok(deps.hasOwnProperty(aSource));
     });
